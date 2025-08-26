@@ -58,7 +58,23 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
     LoadProductsFromStorage();
   }, []);
 
-  
+  // Salva os produtos no AsyncStorage sempre que a lista de produtos muda ou loading é true
+  useEffect(() => {
+    const saveProductsToStorage = async () => {
+      if (!loading) {
+        try {
+          const productsString = JSON.stringify(products);
+          await AsyncStorage.setItem(PRODUCTS_STORAGE_KEY, productsString);
+        } catch (error) {
+          console.error('Erro ao salvar produtos', error);
+        }
+      }
+    };
+
+    saveProductsToStorage();
+  }, [products, loading]);
+
+
 
   // Função para adicionar um novo produto à lista mestre
   const addProduct = (productData: Omit<Product, 'id'>) => {
