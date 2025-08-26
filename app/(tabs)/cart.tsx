@@ -1,4 +1,5 @@
-import { Button, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Alert, Button, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { CartItem, useProducts } from '../../contexts/ProductContext';
 
 // Componente para renderizar cada item na lista da sacola
@@ -17,11 +18,18 @@ const CartListItem = ({ item }: { item: CartItem }) => (
 );
 
 const CartScreen = () => {
-  // Pegamos a sacola (cart) do nosso contexto global
-  const { cart } = useProducts();
+  const router = useRouter();
+  const { cart, finalizeSale } = useProducts();
 
   // Calculamos o preço total da compra
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const handleFinalizeSale = () => {
+    finalizeSale();
+    Alert.alert('Venda Finalizada', 'A venda foi finalizada com sucesso!')
+    router.push('/(tabs)')
+
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -45,7 +53,7 @@ const CartScreen = () => {
             <Text style={styles.totalText}>Total: R$ {totalPrice.toFixed(2).replace('.', ',')}</Text>
             <Button
               title="Finalizar Venda"
-              onPress={() => { /* Lógica para finalizar a venda, faço quando chegar em casa kkkk*/ }}
+              onPress={handleFinalizeSale}
               disabled={cart.length === 0}
               color="#0a7ea4"
             />

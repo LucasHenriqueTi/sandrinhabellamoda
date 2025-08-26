@@ -87,7 +87,7 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
         return produto;
       });
     });
-  }
+  };
 
   const value = {
     products,
