@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
+import { Alert } from 'react-native';
 
 export type Product = {
   id: string;
@@ -9,44 +10,80 @@ export type Product = {
   stock: number;
 };
 
-type ProductContextType = {
-  products: Product[];
-  addProduct: (product: Omit<Product, 'id'>) => void;
-  // deleteProduct: (id: string) => void;
-  // updateStock: (id: string, newStock: number) => void;
+export type CartItem = {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
 };
 
-// 1. CRIANDO O CONTEXTO
-// Cria o Contexto com um valor padrão. Lança um erro caso tentar usá-lo fora do provider
+// Adiciona o estado da sacola (cart) e as funções para manipulá-la.
+type ProductContextType = {
+  products: Product[];
+  cart: CartItem[];
+  addProduct: (product: Omit<Product, 'id'>) => void;
+  addToCart: (product: Product) => void;
+  // Futuramente: removeFromCart, updateCartQuantity, clearCart, etc.
+};
+
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
-
-// 2. CRIANDO O PROVEDOR
+// --- PROVEDOR ---
 export const ProductProvider = ({ children }: { children: ReactNode }) => {
-  // A lista de produtos começa com nossos dados mokados para exemplo.
-  const [products, setProducts] = useState<Product[]>([
-    { id: '1', name: 'Camiseta Básica', price: 79.90, color: 'Branca', gender: 'Unissex', stock: 15 },
-    { id: '2', name: 'Calça Jeans', price: 199.90, color: 'Azul', gender: 'Feminino', stock: 10 },
-    { id: '3', name: 'Moletom', price: 249.90, color: 'Preto', gender: 'Masculino', stock: 5 },
-  ]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
 
-  // Função para adicionar um novo produto à lista
+  // Função para adicionar um novo produto à lista mestre
   const addProduct = (productData: Omit<Product, 'id'>) => {
-    const newProduct: Product = {
-      id: Date.now().toString(),
-      ...productData,
-    };
+    const newProduct: Product = { id: Date.now().toString(), ...productData };
     setProducts(prevProducts => [...prevProducts, newProduct]);
   };
 
-  return (
-    <ProductContext.Provider value={{ products, addProduct }}>
-      {children}
-    </ProductContext.Provider>
-  );
+  // 4. NOVA FUNÇÃO: ADICIONAR PRODUTO À SACOLA
+  const addToCart = (product: Product) => {
+    // Verifica se o produto já está na sacola
+    const existingItem = cart.find(item => item.productId === product.id);
+
+    // Validação de estoque
+    const productInStock = products.find(p => p.id === product.id);
+    const currentStock = productInStock ? productInStock.stock : 0;
+    const quantityInCart = existingItem ? existingItem.quantity : 0;
+    
+    if (quantityInCart >= currentStock) {
+      Alert.alert('Estoque Insuficiente', 'Você já adicionou a quantidade máxima disponível para este item.');
+      return;
+    }
+
+    if (existingItem) {
+      // Se já existe, apenas incrementa a quantidade
+      setCart(
+        cart.map(item =>
+          item.productId === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        )
+      );
+    } else {
+      // Se não existe, adiciona o novo item à sacola
+      const newItem: CartItem = {
+        productId: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+      };
+      setCart(prevCart => [...prevCart, newItem]);
+    }
+  };
+
+  const value = {
+    products,
+    cart, 
+    addProduct,
+    addToCart, 
+  };
+
+  return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
 };
 
-// 3. CRIANDO UM HOOK CUSTOMIZADO 
+// Hook customizado 
 export const useProducts = () => {
   const context = useContext(ProductContext);
   if (context === undefined) {
