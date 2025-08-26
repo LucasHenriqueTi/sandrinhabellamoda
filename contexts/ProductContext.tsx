@@ -22,7 +22,7 @@ type ProductContextType = {
   products: Product[];
   cart: CartItem[];
   addProduct: (product: Omit<Product, 'id'>) => void;
-  addToCart: (product: Product) => void;
+  addToCart: (product: Product) => boolean;
   finalizeSale: () => void;
   // Futuramente: removeFromCart, updateCartQuantity, clearCart, etc.
 };
@@ -31,7 +31,11 @@ const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 // --- PROVEDOR ---
 export const ProductProvider = ({ children }: { children: ReactNode }) => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([
+    { id: '1', name: 'Camiseta Básica', price: 79.90, color: 'Branca', gender: 'Unissex', stock: 15 },
+    { id: '2', name: 'Calça Jeans', price: 199.90, color: 'Azul', gender: 'Feminino', stock: 10 },
+    { id: '3', name: 'Moletom', price: 249.90, color: 'Preto', gender: 'Masculino', stock: 5 },
+  ]);
   const [cart, setCart] = useState<CartItem[]>([]);
 
   // Função para adicionar um novo produto à lista mestre
@@ -41,52 +45,46 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // ADICIONAR PRODUTO À SACOLA
-  const addToCart = (product: Product) => {
-    // Verifica se o produto já está na sacola
+  // [CORREÇÃO #1] Lógica de 'addToCart' atualizada
+  const addToCart = (product: Product): boolean => {
     const existingItem = cart.find(item => item.productId === product.id);
-
-    // Validação de estoque
     const productInStock = products.find(p => p.id === product.id);
     const currentStock = productInStock ? productInStock.stock : 0;
     const quantityInCart = existingItem ? existingItem.quantity : 0;
     
     if (quantityInCart >= currentStock) {
       Alert.alert('Estoque Insuficiente', 'Você já adicionou a quantidade máxima disponível para este item.');
-      return;
+      return false; // Retorna 'falso' para indicar que a operação falhou
     }
 
     if (existingItem) {
-      // Se já existe, apenas incrementa a quantidade
-      setCart(
-        cart.map(item =>
-          item.productId === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        )
-      );
+      setCart(cart.map(item => item.productId === product.id ? { ...item, quantity: item.quantity + 1 } : item));
     } else {
-      // Se não existe, adiciona o novo item à sacola
-      const newItem: CartItem = {
-        productId: product.id,
-        name: product.name,
-        price: product.price,
-        quantity: 1,
-      };
+      const newItem: CartItem = { productId: product.id, name: product.name, price: product.price, quantity: 1 };
       setCart(prevCart => [...prevCart, newItem]);
     }
+    return true; // Retorna 'verdadeiro' para indicar sucesso
   };
 
-  // finção para finalizar venda no carrinho
+  // [CORREÇÃO #2] Lógica de 'finalizeSale' reescrita
   const finalizeSale = () => {
-    let updatedProducts = [...products];
+    // Cria um mapa da sacola para busca rápida (mais eficiente)
+    const cartMap = new Map(cart.map(item => [item.productId, item.quantity]));
 
-    // mapeando os produtos para atualizar o estoque (verificar depois!!)
-    cart.forEach(cartItem => {
-      updatedProducts = updatedProducts.map(produto => {
-        if (produto.id === cartItem.productId) {
-          return { ...produto, stock: produto.stock - cartItem.quantity };
-        }
-        return produto;
-      });
+    // Percorre a lista de produtos UMA ÚNICA VEZ
+    const updatedProducts = products.map(product => {
+      // Se o produto está no mapa da sacola
+      if (cartMap.has(product.id)) {
+        const soldQuantity = cartMap.get(product.id)!;
+        // Retorna o produto com o estoque atualizado
+        return { ...product, stock: product.stock - soldQuantity };
+      }
+      // Se não, retorna o produto como estava
+      return product;
     });
+
+    setProducts(updatedProducts);
+    setCart([]);
   };
 
   const value = {

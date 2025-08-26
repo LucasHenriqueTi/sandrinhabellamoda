@@ -18,29 +18,16 @@ const ProductItem = ({ product }: { product: Product }) => (
 const ProductScreen = () => {
   const { products, addToCart } = useProducts();
 
+  // [CORREÇÃO #1] Lógica do 'handleAddToCart' atualizada
   const handleAddToCart = (product: Product) => {
-  // Ponto de verificação 1: A função foi chamada?
-  console.log('--- Início do Clique ---');
-  console.log('1. Função handleAddToCart foi chamada para o produto:', product.name);
-
-  try {
-    // Chamamos a função do contexto, que é a principal suspeita
-    addToCart(product);
-
-    // Ponto de verificação 2: A função do contexto executou sem erros?
-    console.log('2. Função addToCart do contexto executou com sucesso.');
-
-    // Se chegamos até aqui, o Alert deveria ser chamado
-    Alert.alert('Produto Adicionado!', `${product.name} foi adicionado à sua sacola.`);
-
-    // Ponto de verificação 3: O Alert foi chamado?
-    console.log('3. O Alert foi chamado.');
-
-  } catch (error) {
-    console.error('ERRO! Algo quebrou durante o processo:', error);
-    Alert.alert('Ocorreu um Erro', 'Não foi possível adicionar o produto. Verifique o console.');
-  }
-};
+    // A função 'addToCart' agora retorna true ou false
+    const wasAdded = addToCart(product); 
+    
+    // Mostramos o alerta de sucesso APENAS SE o item foi realmente adicionado
+    if (wasAdded) {
+      Alert.alert('Produto Adicionado!', `${product.name} foi adicionado à sua sacola.`);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -59,7 +46,7 @@ const ProductScreen = () => {
         contentContainerStyle={styles.list}
       />
 
-      {/* O botão flutuante para adicionar produto continua o mesmo */}
+      {/* O botão flutuante para adicionar produto */}
       <Link href="/add-product" asChild>
         <TouchableOpacity style={styles.fab}>
           <Ionicons name="add" size={32} color="white" />
