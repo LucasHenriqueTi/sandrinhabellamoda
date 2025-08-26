@@ -1,75 +1,109 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+// Importando os componentes essenciais do React Native
+import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+// Definindo o "formato" (tipo) de um objeto de Produto com TypeScript
+type Product = {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+};
 
-export default function HomeScreen() {
+// Nossos dados de exemplo, agora com o tipo que definimos
+const MOCK_PRODUCTS: Product[] = [
+  { id: '1', name: 'Hambúrguer Clássico', price: 25.50, stock: 10 },
+  { id: '2', name: 'Batata Frita', price: 12.00, stock: 30 },
+  { id: '3', name: 'Refrigerante', price: 8.00, stock: 50 },
+  { id: '4', name: 'Milkshake de Chocolate', price: 18.00, stock: 15 },
+];
+
+// Componente para renderizar cada item. Note a tipagem da prop "product"
+const ProductItem = ({ product }: { product: Product }) => (
+  <View style={styles.itemContainer}>
+    <View style={styles.itemInfo}>
+      <Text style={styles.itemName}>{product.name}</Text>
+      <Text style={styles.itemPrice}>R$ {product.price.toFixed(2).replace('.', ',')}</Text>
+    </View>
+    <View style={styles.itemStock}>
+      <Text style={styles.stockText}>Estoque: {product.stock}</Text>
+    </View>
+  </View>
+);
+
+// A tela principal agora se chama "ProductScreen" (ou o nome que preferir)
+export default function ProductScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Produtos</Text>
+      </View>
+
+      <FlatList
+        data={MOCK_PRODUCTS}
+        renderItem={({ item }) => <ProductItem product={item} />}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.list}
+      />
+    </SafeAreaView>
   );
 }
 
+// Os estilos continuam iguais
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    marginTop: StatusBar.currentHeight || 0,
+  },
+  header: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#333',
+  },
+  list: {
+    paddingHorizontal: 10,
+  },
+  itemContainer: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 8,
+    marginVertical: 8,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 8,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  itemInfo: {
+    flex: 1,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  itemName: {
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  itemPrice: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 4,
+  },
+  itemStock: {
+    backgroundColor: '#e0e0e0',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+  },
+  stockText: {
+    fontWeight: 'bold',
   },
 });
