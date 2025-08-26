@@ -1,6 +1,8 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
+// Types para produtos
 export type Product = {
   id: string;
   name: string;
@@ -10,6 +12,7 @@ export type Product = {
   stock: number;
 };
 
+// Type para itens na sacola
 export type CartItem = {
   productId: string;
   name: string;
@@ -24,19 +27,38 @@ type ProductContextType = {
   addProduct: (product: Omit<Product, 'id'>) => void;
   addToCart: (product: Product) => boolean;
   finalizeSale: () => void;
-  // Futuramente: removeFromCart, updateCartQuantity, clearCart, etc.
 };
+
+// chave para o AsyncStorage
+const PRODUCTS_STORAGE_KEY = '@SandrinhBellaModa:products';
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 // --- PROVEDOR ---
 export const ProductProvider = ({ children }: { children: ReactNode }) => {
-  const [products, setProducts] = useState<Product[]>([
-    { id: '1', name: 'Camiseta Básica', price: 79.90, color: 'Branca', gender: 'Unissex', stock: 15 },
-    { id: '2', name: 'Calça Jeans', price: 199.90, color: 'Azul', gender: 'Feminino', stock: 10 },
-    { id: '3', name: 'Moletom', price: 249.90, color: 'Preto', gender: 'Masculino', stock: 5 },
-  ]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Carrega os produtos do AsyncStorage ao montar o componente
+  useEffect(() => {
+    const LoadProductsFromStorage = async () => {
+      try {
+        const storedProducts = await AsyncStorage.getItem(PRODUCTS_STORAGE_KEY);
+        if (storedProducts !== null) {
+          setProducts(JSON.parse(storedProducts));
+        }
+      } catch (error) {
+        console.error('Erro ao carregar produtos', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    LoadProductsFromStorage();
+  }, []);
+
+  
 
   // Função para adicionar um novo produto à lista mestre
   const addProduct = (productData: Omit<Product, 'id'>) => {
@@ -45,16 +67,15 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // ADICIONAR PRODUTO À SACOLA
-  // [CORREÇÃO #1] Lógica de 'addToCart' atualizada
   const addToCart = (product: Product): boolean => {
     const existingItem = cart.find(item => item.productId === product.id);
     const productInStock = products.find(p => p.id === product.id);
     const currentStock = productInStock ? productInStock.stock : 0;
     const quantityInCart = existingItem ? existingItem.quantity : 0;
-    
+
     if (quantityInCart >= currentStock) {
       Alert.alert('Estoque Insuficiente', 'Você já adicionou a quantidade máxima disponível para este item.');
-      return false; // Retorna 'falso' para indicar que a operação falhou
+      return false;
     }
 
     if (existingItem) {
@@ -63,23 +84,18 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
       const newItem: CartItem = { productId: product.id, name: product.name, price: product.price, quantity: 1 };
       setCart(prevCart => [...prevCart, newItem]);
     }
-    return true; // Retorna 'verdadeiro' para indicar sucesso
+    return true;
   };
 
-  // [CORREÇÃO #2] Lógica de 'finalizeSale' reescrita
+  // finaliza a venda e atualiza o estoque
   const finalizeSale = () => {
-    // Cria um mapa da sacola para busca rápida (mais eficiente)
     const cartMap = new Map(cart.map(item => [item.productId, item.quantity]));
 
-    // Percorre a lista de produtos UMA ÚNICA VEZ
     const updatedProducts = products.map(product => {
-      // Se o produto está no mapa da sacola
       if (cartMap.has(product.id)) {
         const soldQuantity = cartMap.get(product.id)!;
-        // Retorna o produto com o estoque atualizado
         return { ...product, stock: product.stock - soldQuantity };
       }
-      // Se não, retorna o produto como estava
       return product;
     });
 
@@ -89,10 +105,10 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
 
   const value = {
     products,
-    cart, 
+    cart,
     addProduct,
     addToCart,
-    finalizeSale, 
+    finalizeSale,
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
