@@ -23,6 +23,7 @@ type ProductContextType = {
   cart: CartItem[];
   addProduct: (product: Omit<Product, 'id'>) => void;
   addToCart: (product: Product) => void;
+  finalizeSale: () => void;
   // Futuramente: removeFromCart, updateCartQuantity, clearCart, etc.
 };
 
@@ -39,7 +40,7 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
     setProducts(prevProducts => [...prevProducts, newProduct]);
   };
 
-  // 4. NOVA FUNÇÃO: ADICIONAR PRODUTO À SACOLA
+  // ADICIONAR PRODUTO À SACOLA
   const addToCart = (product: Product) => {
     // Verifica se o produto já está na sacola
     const existingItem = cart.find(item => item.productId === product.id);
@@ -73,11 +74,27 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // finção para finalizar venda no carrinho
+  const finalizeSale = () => {
+    let updatedProducts = [...products];
+
+    // mapeando os produtos para atualizar o estoque (verificar depois!!)
+    cart.forEach(cartItem => {
+      updatedProducts = updatedProducts.map(produto => {
+        if (produto.id === cartItem.productId) {
+          return { ...produto, stock: produto.stock - cartItem.quantity };
+        }
+        return produto;
+      });
+    });
+  }
+
   const value = {
     products,
     cart, 
     addProduct,
-    addToCart, 
+    addToCart,
+    finalizeSale, 
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
