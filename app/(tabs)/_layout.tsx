@@ -1,9 +1,8 @@
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import React from 'react';
 
-const TabLayout = () => {
+export default function TabLayout() {
   const colorScheme = 'light';
 
   return (
@@ -12,20 +11,26 @@ const TabLayout = () => {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
       }}>
+      {/* Aba de Estoque (existente) */}
       <Tabs.Screen
         name="index"
         options={{
           title: 'Estoque',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? 'albums' : 'albums-outline'}
-              color={color} 
-            />
+            <Ionicons name={focused ? 'albums' : 'albums-outline'} size={28} color={color} />
+          ),
+        }}
+      />
+      {/* Aba de Adicionar Produto (existente) */}
+      <Tabs.Screen
+        name="cart" 
+        options={{
+          title: 'Sacola',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'cart' : 'cart-outline'} size={28} color={color} />
           ),
         }}
       />
     </Tabs>
   );
 }
-
-export default TabLayout;
