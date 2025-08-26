@@ -4,16 +4,19 @@ Este é um aplicativo mobile em desenvolvimento para a loja de roupas "Sandrinha
 
 Este projeto também serve como uma atividade de extensão acadêmica, aplicando conceitos modernos de desenvolvimento de aplicativos com React Native.
 
-## ✨ Funcionalidades Atuais (v0.1)
+## ✨ Funcionalidades Atuais (v0.2)
 
-Até o momento, o aplicativo possui as seguintes funcionalidades implementadas:
+O aplicativo agora conta com um fluxo completo de gerenciamento de estoque e vendas.
 
+### Gestão de Estoque
 * **Visualização de Estoque:** Uma tela principal que lista todos os produtos cadastrados, exibindo informações essenciais como nome, preço e quantidade em estoque.
-* **Cadastro de Novos Produtos:**
-    * Um botão flutuante na tela de estoque permite iniciar o fluxo de cadastro.
-    * Uma tela de formulário dedicada para inserir os dados de um novo produto (nome, preço, cor, gênero e quantidade).
-    * Validação básica para garantir que os campos essenciais sejam preenchidos.
-* **Atualização em Tempo Real:** Após o cadastro de um novo item, a lista de estoque é atualizada automaticamente, refletindo o novo estado do inventário.
+* **Cadastro de Novos Produtos:** Um fluxo completo para adicionar novos itens ao inventário através de um formulário dedicado.
+
+### Fluxo de Venda
+* **Adição de Itens à Sacola:** É possível adicionar produtos à sacola de compras diretamente da tela de estoque com um simples toque.
+* **Verificação de Estoque:** O sistema impede que mais itens do que o disponível em estoque sejam adicionados à sacola.
+* **Tela de Sacola de Compras:** Uma aba dedicada exibe todos os itens na sacola, suas quantidades, o subtotal por item e o valor total da venda.
+* **Finalização de Venda:** Ao finalizar a venda, a sacola é limpa e o estoque dos produtos vendidos é atualizado automaticamente.
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -34,11 +37,13 @@ O projeto segue uma arquitetura organizada para facilitar a manutenção e escal
 /
 ├── app/              # Telas e rotas (gerenciado pelo Expo Router)
 │   ├── (tabs)/       # Layout principal de navegação por abas
+│   │   ├── index.tsx # Tela de Estoque
+│   │   └── cart.tsx  # Tela da Sacola de Compras
 │   └── add-product.tsx # Tela de formulário para adicionar produtos
 ├── assets/           # Fontes, imagens e outros arquivos estáticos
-├── components/       # Componentes reutilizáveis (ex: ProductItem)
+├── components/       # Componentes reutilizáveis
 ├── constants/        # Constantes do app (ex: cores)
-└── contexts/         # Lógica de estado global (ex: ProductContext)
+└── contexts/         # Lógica de estado global (ProductContext)
 ```
 
 ## 🚀 Como Executar o Projeto
@@ -63,9 +68,9 @@ O projeto segue uma arquitetura organizada para facilitar a manutenção e escal
 
 ## 🔮 Próximos Passos
 
-O roadmap de desenvolvimento para as próximas versões inclui:
+Agora que o fluxo principal está completo, o foco futuro será na persistência de dados e na melhoria da experiência do usuário.
 
-* [ ] Criação da "Sacola de Vendas" para adicionar produtos a um carrinho.
-* [ ] Implementação da lógica de baixa no estoque ao finalizar uma venda.
-* [ ] Funcionalidade para editar e excluir produtos existentes.
-* [ ] Tela de histórico para visualizar todas as vendas realizadas.
+* **[ ] Persistência de Dados:** Implementar `AsyncStorage` ou um banco de dados local (como `SQLite` ou `Realm`) para que os produtos não desapareçam ao fechar o aplicativo.
+* **[ ] Edição e Exclusão de Produtos:** Adicionar a funcionalidade para editar os dados de um produto existente ou removê-lo do estoque.
+* **[ ] Melhorias na Sacola:** Permitir o ajuste de quantidade (+/-) e a remoção de itens individuais da sacola.
+* **[ ] Histórico de Vendas:** Criar uma nova tela para armazenar e visualizar um registro de todas as vendas finalizadas.
