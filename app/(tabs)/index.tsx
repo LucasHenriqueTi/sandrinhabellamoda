@@ -1,22 +1,7 @@
 import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Product, useProducts } from '../../contexts/ProductContext';
 
-// Definindo o "formato" (tipo) de um objeto de Produto com TypeScript
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-};
-
-// Nossos dados de exemplo, agora com o tipo que definimos
-const MOCK_PRODUCTS: Product[] = [
-  { id: '1', name: 'Hambúrguer Clássico', price: 25.50, stock: 10 },
-  { id: '2', name: 'Batata Frita', price: 12.00, stock: 30 },
-  { id: '3', name: 'Refrigerante', price: 8.00, stock: 50 },
-  { id: '4', name: 'Milkshake de Chocolate', price: 18.00, stock: 15 },
-];
-
-// Componente para renderizar cada item. Note a tipagem da prop "product"
+// O componente para renderizar cada item continua o mesmo
 const ProductItem = ({ product }: { product: Product }) => (
   <View style={styles.itemContainer}>
     <View style={styles.itemInfo}>
@@ -29,16 +14,17 @@ const ProductItem = ({ product }: { product: Product }) => (
   </View>
 );
 
-// A tela principal agora se chama "ProductScreen" (ou o nome que preferir)
 export default function ProductScreen() {
+  const { products } = useProducts();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Produtos</Text>
+        <Text style={styles.headerTitle}>Estoque</Text>
       </View>
 
       <FlatList
-        data={MOCK_PRODUCTS}
+        data={products}
         renderItem={({ item }) => <ProductItem product={item} />}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.list}
@@ -47,7 +33,6 @@ export default function ProductScreen() {
   );
 }
 
-// Os estilos continuam iguais
 const styles = StyleSheet.create({
   container: {
     flex: 1,
