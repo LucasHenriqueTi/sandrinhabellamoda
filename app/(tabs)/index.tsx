@@ -1,7 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import React from 'react';
-import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Product, useProducts } from '../../contexts/ProductContext';
 
 const ProductItem = ({ product }: { product: Product }) => (
@@ -16,8 +15,32 @@ const ProductItem = ({ product }: { product: Product }) => (
   </View>
 );
 
-export default function ProductScreen() {
-  const { products } = useProducts();
+const ProductScreen = () => {
+  const { products, addToCart } = useProducts();
+
+  const handleAddToCart = (product: Product) => {
+  // Ponto de verificação 1: A função foi chamada?
+  console.log('--- Início do Clique ---');
+  console.log('1. Função handleAddToCart foi chamada para o produto:', product.name);
+
+  try {
+    // Chamamos a função do contexto, que é a principal suspeita
+    addToCart(product);
+
+    // Ponto de verificação 2: A função do contexto executou sem erros?
+    console.log('2. Função addToCart do contexto executou com sucesso.');
+
+    // Se chegamos até aqui, o Alert deveria ser chamado
+    Alert.alert('Produto Adicionado!', `${product.name} foi adicionado à sua sacola.`);
+
+    // Ponto de verificação 3: O Alert foi chamado?
+    console.log('3. O Alert foi chamado.');
+
+  } catch (error) {
+    console.error('ERRO! Algo quebrou durante o processo:', error);
+    Alert.alert('Ocorreu um Erro', 'Não foi possível adicionar o produto. Verifique o console.');
+  }
+};
 
   return (
     <SafeAreaView style={styles.container}>
@@ -27,11 +50,16 @@ export default function ProductScreen() {
 
       <FlatList
         data={products}
-        renderItem={({ item }) => <ProductItem product={item} />}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => handleAddToCart(item)}>
+            <ProductItem product={item} />
+          </TouchableOpacity>
+        )}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.list}
       />
 
+      {/* O botão flutuante para adicionar produto continua o mesmo */}
       <Link href="/add-product" asChild>
         <TouchableOpacity style={styles.fab}>
           <Ionicons name="add" size={32} color="white" />
@@ -41,7 +69,8 @@ export default function ProductScreen() {
   );
 }
 
-// 3. ADICIONAMOS OS ESTILOS PARA O BOTÃO
+export default ProductScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -63,7 +92,7 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 10,
-    paddingBottom: 80,
+    paddingBottom: 80, 
   },
   itemContainer: {
     backgroundColor: '#fff',
@@ -101,13 +130,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   fab: {
-    position: 'absolute', 
-    right: 20,          
-    bottom: 20,          
-    backgroundColor: '#0a7ea4', 
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    backgroundColor: '#0a7ea4',
     width: 60,
     height: 60,
-    borderRadius: 30,    
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
