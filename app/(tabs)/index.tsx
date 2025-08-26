@@ -1,4 +1,3 @@
-// Importando os componentes essenciais do React Native
 import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 
 // Definindo o "formato" (tipo) de um objeto de Produto com TypeScript
