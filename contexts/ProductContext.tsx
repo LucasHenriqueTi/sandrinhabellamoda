@@ -27,6 +27,7 @@ type ProductContextType = {
   addProduct: (product: Omit<Product, 'id'>) => void;
   addToCart: (product: Product) => boolean;
   finalizeSale: () => void;
+  deleteProduct: (productId: string) => void;
 };
 
 // chave para o AsyncStorage
@@ -103,6 +104,13 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
     return true;
   };
 
+  // Função para deletar um produto da lista mestre
+  const deleteProduct = (productId: string) => {
+    // o filter é responsavel por criar um novo array sem o produto deletado
+    const updateProducts = products.filter(product => product.id !== productId);
+    setProducts(updateProducts);
+  };
+
   // finaliza a venda e atualiza o estoque
   const finalizeSale = () => {
     const cartMap = new Map(cart.map(item => [item.productId, item.quantity]));
@@ -125,6 +133,7 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
     addProduct,
     addToCart,
     finalizeSale,
+    deleteProduct,
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;

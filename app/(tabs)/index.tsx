@@ -3,7 +3,7 @@ import { Link } from 'expo-router';
 import { Alert, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Product, useProducts } from '../../contexts/ProductContext';
 
-const ProductItem = ({ product }: { product: Product }) => (
+const ProductItem = ({ product, onDelete }: { product: Product; onDelete: () => void }) => (
   <View style={styles.itemContainer}>
     <View style={styles.itemInfo}>
       <Text style={styles.itemName}>{product.name}</Text>
@@ -12,21 +12,45 @@ const ProductItem = ({ product }: { product: Product }) => (
     <View style={styles.itemStock}>
       <Text style={styles.stockText}>Estoque: {product.stock}</Text>
     </View>
+    <View style={styles.itemActions}>
+      <TouchableOpacity onPress={() => {/* Lógica de Editar virá aqui */}}>
+        <Ionicons name="pencil" size={24} color="#0a7ea4" />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onDelete} style={{ marginLeft: 15 }}>
+        <Ionicons name="trash-outline" size={24} color="#c0392b" />
+      </TouchableOpacity>
+    </View>
   </View>
 );
 
 const ProductScreen = () => {
-  const { products, addToCart } = useProducts();
+  const { products, addToCart, deleteProduct } = useProducts();
 
-  // [CORREÇÃO #1] Lógica do 'handleAddToCart' atualizada
+  // Função para lidar com o toque no item do produto
   const handleAddToCart = (product: Product) => {
-    // A função 'addToCart' agora retorna true ou false
     const wasAdded = addToCart(product); 
     
-    // Mostramos o alerta de sucesso APENAS SE o item foi realmente adicionado
     if (wasAdded) {
       Alert.alert('Produto Adicionado!', `${product.name} foi adicionado à sua sacola.`);
     }
+  };
+
+  const handleDeleteProduct = (productId: string, productName: string) => {
+    Alert.alert(
+      "Confirmar Exclusão",
+      `Tem certeza de que deseja excluir o produto "${productName}"? Esta ação não pode ser desfeita.`, // Mensagem
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        { 
+          text: "Excluir", 
+          onPress: () => deleteProduct(productId),
+          style: "destructive"
+        }
+      ]
+    );
   };
 
   return (
@@ -39,7 +63,10 @@ const ProductScreen = () => {
         data={products}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handleAddToCart(item)}>
-            <ProductItem product={item} />
+            <ProductItem 
+              product={item} 
+              onDelete={() => handleDeleteProduct(item.id, item.name)} 
+            />
           </TouchableOpacity>
         )}
         keyExtractor={item => item.id}
@@ -59,6 +86,7 @@ const ProductScreen = () => {
 export default ProductScreen;
 
 const styles = StyleSheet.create({
+  // Estilos para o layout geral da tela
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
@@ -79,8 +107,10 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 10,
-    paddingBottom: 80, 
+    paddingBottom: 80, // Espaço para o botão flutuante não cobrir o último item
   },
+
+  // Estilos para cada item da lista de produtos
   itemContainer: {
     backgroundColor: '#fff',
     padding: 15,
@@ -96,7 +126,7 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
   },
   itemInfo: {
-    flex: 1,
+    flex: 1, // Faz a área de informação ocupar todo o espaço disponível, empurrando as ações para a direita
   },
   itemName: {
     fontSize: 18,
@@ -108,14 +138,22 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   itemStock: {
-    backgroundColor: '#e0e0e0',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 15,
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  // Novo estilo para o container dos botões de editar/excluir
+  itemActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10, // Espaçamento entre as informações e os botões
   },
   stockText: {
-    fontWeight: 'bold',
+    fontSize: 14,
+    color: '#666',
   },
+
+  // Estilo para o botão de Ação Flutuante (FAB)
   fab: {
     position: 'absolute',
     right: 20,
