@@ -1,7 +1,9 @@
-import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Link } from 'expo-router';
+import React from 'react';
+import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Product, useProducts } from '../../contexts/ProductContext';
 
-// O componente para renderizar cada item continua o mesmo
 const ProductItem = ({ product }: { product: Product }) => (
   <View style={styles.itemContainer}>
     <View style={styles.itemInfo}>
@@ -29,10 +31,17 @@ export default function ProductScreen() {
         keyExtractor={item => item.id}
         contentContainerStyle={styles.list}
       />
+
+      <Link href="/add-product" asChild>
+        <TouchableOpacity style={styles.fab}>
+          <Ionicons name="add" size={32} color="white" />
+        </TouchableOpacity>
+      </Link>
     </SafeAreaView>
   );
 }
 
+// 3. ADICIONAMOS OS ESTILOS PARA O BOTÃO
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -54,6 +63,7 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 10,
+    paddingBottom: 80,
   },
   itemContainer: {
     backgroundColor: '#fff',
@@ -89,5 +99,21 @@ const styles = StyleSheet.create({
   },
   stockText: {
     fontWeight: 'bold',
+  },
+  fab: {
+    position: 'absolute', 
+    right: 20,          
+    bottom: 20,          
+    backgroundColor: '#0a7ea4', 
+    width: 60,
+    height: 60,
+    borderRadius: 30,    
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });
