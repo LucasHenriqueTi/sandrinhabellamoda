@@ -32,6 +32,7 @@ type ProductContextType = {
   editProduct: (updateProduct: Product) => void;
   removeFromCart: (productId: string) => void;
   updateCartQuantity: (productId: string, amount: number) => void;
+  restoreStock: (items: CartItem[]) => void;
 };
 
 // chave para o AsyncStorage
@@ -174,6 +175,23 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
     setProducts(updatedProducts);
     setCart([]);
   };
+
+  // função para restaurar o estoque ao deletar uma venda
+  const restoreStock = (items: CartItem[]) => {
+    const itemsMap = new Map(items.map(item => [item.productId, item.quantity]));
+
+    const updatedProducts = products.map(product => {
+      if (itemsMap.has(product.id)) {
+        const returnedQuantity = itemsMap.get(product.id)!;
+        // Adiciona a quantidade de volta ao estoque
+        return { ...product, stock: product.stock + returnedQuantity };
+      }
+      return product;
+    });
+
+    setProducts(updatedProducts);
+  };
+
 
   const value = {
     products,

@@ -14,6 +14,7 @@ export type Sale = {
 type SalesContextType = {
     sales: Sale[];
     addSale: (items: CartItem[]) => void;
+    deleteSale: (saleId: string) => void;
 };
 
 const SalesContext = createContext<SalesContextType | undefined>(undefined);
@@ -73,9 +74,16 @@ export const SalesProvider = ({ children }: { children: ReactNode }) => {
         setSales(prevSales => [newSale, ...prevSales]);
     };
 
+    // função para deletar uma venda do historico
+    const deleteSale = (saleId: string) => {
+        setSales(prevSales => prevSales.filter(sale => sale.id !== saleId));
+
+    };
+
     const value = {
         sales,
-        addSale
+        addSale,
+        deleteSale
     };
 
     return (
@@ -89,6 +97,6 @@ export const useSales = () => {
     const context = useContext(SalesContext);
     if (context === undefined) {
         throw new Error('useSales deve ser usado dentro de um SalesProvider');
-        }
-        return context;
-    };
+    }
+    return context;
+};
