@@ -1,39 +1,45 @@
 # Sandrinha Bella Moda - App de Gestão de Estoque
 
-Este é um aplicativo mobile em desenvolvimento para a loja de roupas "Sandrinha Bella Moda". O objetivo principal do projeto é substituir o controle manual de estoque e vendas por uma solução digital, simples e eficiente, otimizando a gestão e reduzindo erros operacionais.
+Este é um aplicativo mobile em desenvolvimento para a loja de roupas "Sandrinha Bella Moda". O objetivo principal do projeto é substituir o controle manual de estoque e vendas por uma solução digital, simples e eficiente, otimizando a gestão e permitindo a análise do histórico de vendas.
 
 Este projeto também serve como uma atividade de extensão acadêmica, aplicando conceitos modernos de desenvolvimento de aplicativos com React Native.
 
-## ✨ Funcionalidades Atuais (v0.3)
+## ✨ Funcionalidades Atuais (v0.4)
 
-O aplicativo agora conta com um fluxo completo de gerenciamento de estoque e vendas, com uma base de código refatorada para maior manutenibilidade.
+O aplicativo agora conta com um ciclo completo de gestão de produtos, um fluxo de vendas interativo e um sistema de histórico.
 
 ### Gestão de Estoque (CRUD Completo)
 * **Listar (Read):** Visualização completa do estoque na tela principal.
 * **Cadastrar (Create):** Adição de novos produtos ao inventário através de um formulário.
-* **Editar (Update):** Edição dos detalhes de produtos existentes reutilizando o mesmo formulário.
-* **Excluir (Delete):** Remoção de produtos do estoque com um alerta de confirmação.
-* **Persistência de Dados:** Todo o estoque é salvo no dispositivo, garantindo que os dados não se percam ao fechar e reabrir o aplicativo.
+* **Editar (Update):** Edição dos detalhes de produtos existentes.
+* **Excluir (Delete):** Remoção de produtos do estoque com confirmação.
+* **Persistência:** Todo o inventário de produtos é salvo permanentemente no dispositivo.
 
 ### Fluxo de Venda
-* **Adição de Itens à Sacola:** Produtos podem ser adicionados à sacola de compras diretamente da tela de estoque.
-* **Controle de Quantidade:** É possível incrementar, decrementar ou remover itens diretamente na tela da sacola, com validação de estoque em tempo real.
-* **Indicador Visual (Badge):** O ícone da aba "Sacola" exibe um indicador numérico com a quantidade total de itens, atualizado em tempo real.
-* **Finalização de Venda:** A finalização da venda dá baixa automática no estoque e limpa a sacola.
+* **Sacola de Compras Interativa:** Adição de itens, controle de quantidade (+/-) e remoção individual de produtos, com validação de estoque em tempo real.
+* **Indicador Visual (Badge):** O ícone da aba "Sacola" exibe a quantidade total de itens.
+* **Finalização de Venda:** A finalização da venda dá baixa automática no estoque e registra a transação.
+
+### Histórico de Vendas
+* **Registro Automático:** Cada venda finalizada é salva permanentemente no dispositivo.
+* **Tela de Histórico:** Uma aba dedicada exibe a lista de todas as vendas passadas, ordenadas da mais recente para a mais antiga.
+* **Detalhes da Venda:** Cada registro no histórico exibe a data, o total de itens e o valor total da venda.
 
 ## 🏛️ Arquitetura
 
-O projeto adota um padrão de **Separação de Responsabilidades**, dividindo a interface em duas categorias principais para facilitar a manutenção e escalabilidade:
+O projeto adota um padrão de **Separação de Responsabilidades** com uma arquitetura baseada em contextos para gerenciar o estado global, dividindo-o em domínios lógicos:
 
-* **Screens (Telas):** Componentes de alto nível responsáveis pela lógica de negócio, busca de dados do contexto e layout geral da tela (ex: `ProductScreen`, `CartScreen`).
-* **Components (Componentes Reutilizáveis):** Componentes "puros" e autossuficientes responsáveis apenas pela aparência e exibição de dados recebidos via `props` (ex: `ProductItem`, `CartListItem`).
+* **`ProductContext`:** Responsável por todo o estado relacionado ao inventário de produtos e à sacola de compras atual.
+* **`SalesContext`:** Responsável por todo o estado relacionado ao histórico de vendas passadas.
+* **Screens (Telas):** Componentes que orquestram a lógica de negócio e consomem dados dos contextos.
+* **Components (Componentes Reutilizáveis):** Componentes puros e autossuficientes responsáveis pela aparência.
 
 ## 🛠️ Tecnologias Utilizadas
 
 * **Framework:** React Native (com Expo)
 * **Linguagem:** TypeScript
 * **Roteamento:** Expo Router
-* **Gerenciamento de Estado:** React Context API
+* **Gerenciamento de Estado:** React Context API (Múltiplos Contextos)
 * **Persistência Local:** AsyncStorage
 * **Estilização:** React Native `StyleSheet`
 
@@ -43,15 +49,17 @@ O projeto adota um padrão de **Separação de Responsabilidades**, dividindo a 
 /
 ├── app/              # Telas e rotas
 │   ├── (tabs)/
-│   │   ├── index.tsx # Tela de Estoque
-│   │   └── cart.tsx  # Tela da Sacola
+│   │   ├── index.tsx   # Tela de Estoque
+│   │   ├── cart.tsx    # Tela da Sacola
+│   │   └── history.tsx # Tela de Histórico
 │   └── add-product.tsx # Tela de Cadastro/Edição
 ├── assets/           # Arquivos estáticos
 ├── components/       # Componentes reutilizáveis
 │   ├── ProductItem.tsx
 │   └── CartListItem.tsx
-├── constants/        # Constantes (cores)
-└── contexts/         # Estado global (ProductContext)
+└── contexts/         # Estado global
+    ├── ProductContext.tsx
+    └── SalesContext.tsx
 ```
 
 ## 🚀 Como Executar o Projeto
@@ -62,8 +70,9 @@ O projeto adota um padrão de **Separação de Responsabilidades**, dividindo a 
 
 ## 🔮 Próximos Passos
 
-Com o núcleo do aplicativo estável e bem estruturado, o próximo grande objetivo é adicionar inteligência de negócio.
+Com as funcionalidades principais implementadas, o foco futuro é o refinamento e a adição de mais inteligência e usabilidade.
 
-* **[ ] Histórico de Vendas:** Criar uma nova tela e a lógica necessária para armazenar e visualizar um registro de todas as vendas finalizadas, permitindo futuras análises.
-* **[ ] Melhorias de UI/UX:** Adicionar feedbacks mais sutis (como toasts em vez de alertas), animações e otimizar a interface geral.
-* **[ ] Busca e Filtro:** Implementar uma barra de busca na tela de estoque para encontrar produtos rapidamente.
+* **[ ] Busca e Filtro de Produtos:** Implementar uma barra de busca na tela de estoque para encontrar produtos rapidamente.
+* **[ ] Detalhes da Venda:** Tornar cada item no histórico clicável, levando a uma nova tela que mostra em detalhes todos os produtos daquela venda específica.
+* **[ ] Melhorias de UI/UX:** Adicionar feedbacks mais sutis (como *toasts* em vez de alertas), animações, e otimizar a interface geral.
+* **[ ] Relatórios Simples:** Criar uma nova tela ou seção que analise o histórico de vendas para mostrar dados como "produto mais vendido" ou "faturamento do dia/mês".
