@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { useProducts } from '../../contexts/ProductContext';
 
-export default function TabLayout() {
+const TabLayout = () => {
   const colorScheme = 'light';
   const { cartItemCount } = useProducts();
 
@@ -13,7 +13,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
       }}>
-      {/* Aba de Estoque (existente) */}
+      {/* Aba de Estoque*/}
       <Tabs.Screen
         name="index"
         options={{
@@ -23,7 +23,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      {/* Aba de Adicionar Produto (existente) */}
+      {/* Aba de Adicionar Produto */}
       <Tabs.Screen
         name="cart"
         options={{
@@ -34,6 +34,18 @@ export default function TabLayout() {
           tabBarBadge: cartItemCount > 0 ? cartItemCount : undefined,
         }}
       />
+      {/* Aba de Histórico de Vendas */}
+      <Tabs.Screen
+        name="history" 
+        options={{
+          title: 'Histórico',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'receipt' : 'receipt-outline'} size={28} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
+
+export default TabLayout;
