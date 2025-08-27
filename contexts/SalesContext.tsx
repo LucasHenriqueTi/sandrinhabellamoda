@@ -21,7 +21,7 @@ const SalesContext = createContext<SalesContextType | undefined>(undefined);
 // chave para o armazenamento asyncstorage
 const SALES_STORAGE_KEY = '@SandrinhaBellaModa:sales';
 
-const SalesProvider = ({ children }: { children: ReactNode }) => {
+export const SalesProvider = ({ children }: { children: ReactNode }) => {
     const [sales, setSales] = useState<Sale[]>([]);
     const [loading, setLoading] = useState(true);
 

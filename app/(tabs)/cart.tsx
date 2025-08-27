@@ -2,15 +2,18 @@ import { useRouter } from 'expo-router';
 import { Alert, Button, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import CartListItem from '../../components/CartListItem';
 import { useProducts } from '../../contexts/ProductContext';
+import { useSales } from '../../contexts/SalesContext';
 
 const CartScreen = () => {
   const router = useRouter();
   const { cart, finalizeSale, updateCartQuantity, removeFromCart } = useProducts();
+  const { addSale } = useSales();
 
   // Calculando o preço total da compra
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleFinalizeSale = () => {
+    addSale(cart);
     finalizeSale();
     Alert.alert('Venda Finalizada', 'O estoque foi atualizado com sucesso!');
     router.push('/(tabs)');
