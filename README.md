@@ -4,73 +4,66 @@ Este é um aplicativo mobile em desenvolvimento para a loja de roupas "Sandrinha
 
 Este projeto também serve como uma atividade de extensão acadêmica, aplicando conceitos modernos de desenvolvimento de aplicativos com React Native.
 
-## ✨ Funcionalidades Atuais (v0.2)
+## ✨ Funcionalidades Atuais (v0.3)
 
-O aplicativo agora conta com um fluxo completo de gerenciamento de estoque e vendas.
+O aplicativo agora conta com um fluxo completo de gerenciamento de estoque e vendas, com uma base de código refatorada para maior manutenibilidade.
 
-### Gestão de Estoque
-* **Visualização de Estoque:** Uma tela principal que lista todos os produtos cadastrados, exibindo informações essenciais como nome, preço e quantidade em estoque.
-* **Cadastro de Novos Produtos:** Um fluxo completo para adicionar novos itens ao inventário através de um formulário dedicado.
+### Gestão de Estoque (CRUD Completo)
+* **Listar (Read):** Visualização completa do estoque na tela principal.
+* **Cadastrar (Create):** Adição de novos produtos ao inventário através de um formulário.
+* **Editar (Update):** Edição dos detalhes de produtos existentes reutilizando o mesmo formulário.
+* **Excluir (Delete):** Remoção de produtos do estoque com um alerta de confirmação.
+* **Persistência de Dados:** Todo o estoque é salvo no dispositivo, garantindo que os dados não se percam ao fechar e reabrir o aplicativo.
 
 ### Fluxo de Venda
-* **Adição de Itens à Sacola:** É possível adicionar produtos à sacola de compras diretamente da tela de estoque com um simples toque.
-* **Verificação de Estoque:** O sistema impede que mais itens do que o disponível em estoque sejam adicionados à sacola.
-* **Tela de Sacola de Compras:** Uma aba dedicada exibe todos os itens na sacola, suas quantidades, o subtotal por item e o valor total da venda.
-* **Finalização de Venda:** Ao finalizar a venda, a sacola é limpa e o estoque dos produtos vendidos é atualizado automaticamente.
+* **Adição de Itens à Sacola:** Produtos podem ser adicionados à sacola de compras diretamente da tela de estoque.
+* **Controle de Quantidade:** É possível incrementar, decrementar ou remover itens diretamente na tela da sacola, com validação de estoque em tempo real.
+* **Indicador Visual (Badge):** O ícone da aba "Sacola" exibe um indicador numérico com a quantidade total de itens, atualizado em tempo real.
+* **Finalização de Venda:** A finalização da venda dá baixa automática no estoque e limpa a sacola.
+
+## 🏛️ Arquitetura
+
+O projeto adota um padrão de **Separação de Responsabilidades**, dividindo a interface em duas categorias principais para facilitar a manutenção e escalabilidade:
+
+* **Screens (Telas):** Componentes de alto nível responsáveis pela lógica de negócio, busca de dados do contexto e layout geral da tela (ex: `ProductScreen`, `CartScreen`).
+* **Components (Componentes Reutilizáveis):** Componentes "puros" e autossuficientes responsáveis apenas pela aparência e exibição de dados recebidos via `props` (ex: `ProductItem`, `CartListItem`).
 
 ## 🛠️ Tecnologias Utilizadas
 
-O projeto foi construído utilizando um ecossistema moderno baseado em JavaScript e TypeScript.
-
-* **Framework:** [React Native](https://reactnative.dev/) (com [Expo](https://expo.dev/))
-* **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
-* **Roteamento e Navegação:** [Expo Router](https://docs.expo.dev/router/introduction/) (navegação baseada em arquivos)
-* **Gerenciamento de Estado Global:** [React Context API](https://react.dev/learn/passing-data-deeply-with-context)
-* **Estilização:** React Native `StyleSheet` (baseado em Flexbox)
-* **Ícones:** `@expo/vector-icons`
+* **Framework:** React Native (com Expo)
+* **Linguagem:** TypeScript
+* **Roteamento:** Expo Router
+* **Gerenciamento de Estado:** React Context API
+* **Persistência Local:** AsyncStorage
+* **Estilização:** React Native `StyleSheet`
 
 ## 📂 Estrutura de Pastas
 
-O projeto segue uma arquitetura organizada para facilitar a manutenção e escalabilidade.
-
 ```
 /
-├── app/              # Telas e rotas (gerenciado pelo Expo Router)
-│   ├── (tabs)/       # Layout principal de navegação por abas
+├── app/              # Telas e rotas
+│   ├── (tabs)/
 │   │   ├── index.tsx # Tela de Estoque
-│   │   └── cart.tsx  # Tela da Sacola de Compras
-│   └── add-product.tsx # Tela de formulário para adicionar produtos
-├── assets/           # Fontes, imagens e outros arquivos estáticos
+│   │   └── cart.tsx  # Tela da Sacola
+│   └── add-product.tsx # Tela de Cadastro/Edição
+├── assets/           # Arquivos estáticos
 ├── components/       # Componentes reutilizáveis
-├── constants/        # Constantes do app (ex: cores)
-└── contexts/         # Lógica de estado global (ProductContext)
+│   ├── ProductItem.tsx
+│   └── CartListItem.tsx
+├── constants/        # Constantes (cores)
+└── contexts/         # Estado global (ProductContext)
 ```
 
 ## 🚀 Como Executar o Projeto
 
-1.  **Clone o repositório:**
-    ```bash
-    git clone <url-do-seu-repositorio>
-    ```
-2.  **Acesse a pasta do projeto:**
-    ```bash
-    cd SandrinhaBellaModa-App
-    ```
-3.  **Instale as dependências:**
-    ```bash
-    npm install
-    ```
-4.  **Inicie o servidor de desenvolvimento:**
-    ```bash
-    npx expo start
-    ```
-5.  **Abra no seu celular:** Escaneie o QR Code exibido no terminal com o aplicativo **Expo Go** (disponível para Android e iOS).
+1.  **Instale as dependências:** `npm install`
+2.  **Inicie o servidor:** `npx expo start`
+3.  **Abra no celular:** Escaneie o QR Code com o app **Expo Go**.
 
 ## 🔮 Próximos Passos
 
-Agora que o fluxo principal está completo, o foco futuro será na persistência de dados e na melhoria da experiência do usuário.
+Com o núcleo do aplicativo estável e bem estruturado, o próximo grande objetivo é adicionar inteligência de negócio.
 
-* **[ ] Persistência de Dados:** Implementar `AsyncStorage` ou um banco de dados local (como `SQLite` ou `Realm`) para que os produtos não desapareçam ao fechar o aplicativo.
-* **[ ] Edição e Exclusão de Produtos:** Adicionar a funcionalidade para editar os dados de um produto existente ou removê-lo do estoque.
-* **[ ] Melhorias na Sacola:** Permitir o ajuste de quantidade (+/-) e a remoção de itens individuais da sacola.
-* **[ ] Histórico de Vendas:** Criar uma nova tela para armazenar e visualizar um registro de todas as vendas finalizadas.
+* **[ ] Histórico de Vendas:** Criar uma nova tela e a lógica necessária para armazenar e visualizar um registro de todas as vendas finalizadas, permitindo futuras análises.
+* **[ ] Melhorias de UI/UX:** Adicionar feedbacks mais sutis (como toasts em vez de alertas), animações e otimizar a interface geral.
+* **[ ] Busca e Filtro:** Implementar uma barra de busca na tela de estoque para encontrar produtos rapidamente.
