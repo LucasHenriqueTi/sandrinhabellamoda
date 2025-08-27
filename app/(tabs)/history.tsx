@@ -1,6 +1,9 @@
 import { Link } from 'expo-router';
-import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Colors } from '../../constants/Colors';
 import { Sale, useSales } from '../../contexts/SalesContext';
+
+const theme = Colors.dark;
 
 // Função para formatar a data para um formato mais legível
 const formatDate = (dateString: string) => {
@@ -67,36 +70,38 @@ const HistoryScreen = () => {
 
 export default HistoryScreen;
 
+// Estilos atualizados para o tema escuro
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
-        marginTop: StatusBar.currentHeight || 0,
+        backgroundColor: theme.background,
     },
     header: {
         paddingVertical: 16,
         paddingHorizontal: 20,
-        backgroundColor: '#fff',
+        backgroundColor: theme.card,
         borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
+        borderBottomColor: theme.border,
     },
     headerTitle: {
         fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
-        color: '#333',
+        color: theme.text,
     },
     list: {
         paddingHorizontal: 10,
     },
     itemContainer: {
-        backgroundColor: '#fff',
+        backgroundColor: theme.card,
         padding: 15,
         borderRadius: 8,
-        marginVertical: 8,
+        marginVertical: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        borderWidth: 1,
+        borderColor: theme.border,
     },
     itemInfo: {
         flex: 1,
@@ -104,15 +109,17 @@ const styles = StyleSheet.create({
     itemDate: {
         fontSize: 16,
         fontWeight: '500',
+        color: theme.text,
     },
     itemDetails: {
         fontSize: 14,
-        color: '#666',
+        color: theme.tabIconDefault,
         marginTop: 4,
     },
     itemTotal: {
         fontSize: 18,
         fontWeight: 'bold',
+        color: theme.tint, // Usando a cor de destaque (dourado) para o total
     },
     emptyContainer: {
         flex: 1,
@@ -121,6 +128,6 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         fontSize: 18,
-        color: '#666',
+        color: theme.tabIconDefault,
     },
 });
