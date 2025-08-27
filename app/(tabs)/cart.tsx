@@ -1,41 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Alert, Button, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { CartItem, useProducts } from '../../contexts/ProductContext';
-
-// Componente para renderizar cada item na lista da sacola
-const CartListItem = ({ item, onUpdateQuantity, onRemove }: {
-  item: CartItem;
-  onUpdateQuantity: (amount: number) => void;
-  onRemove: () => void;
-}) => (
-  <View style={styles.itemContainer}>
-    {/* Informações do item à esquerda */}
-    <View style={styles.itemInfo}>
-      <Text style={styles.itemName}>{item.name}</Text>
-      <Text style={styles.itemDetails}>
-        R$ {item.price.toFixed(2).replace('.', ',')} cada
-      </Text>
-    </View>
-
-    {/* Ações do item à direita */}
-    <View style={styles.itemActions}>
-      <TouchableOpacity onPress={() => onUpdateQuantity(-1)}>
-        <Ionicons name="remove-circle-outline" size={28} color="#c0392b" />
-      </TouchableOpacity>
-
-      <Text style={styles.itemQuantity}>{item.quantity}</Text>
-
-      <TouchableOpacity onPress={() => onUpdateQuantity(1)}>
-        <Ionicons name="add-circle-outline" size={28} color="#27ae60" />
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={onRemove} style={{ marginLeft: 15 }}>
-        <Ionicons name="trash-outline" size={26} color="#333" />
-      </TouchableOpacity>
-    </View>
-  </View>
-);
+import { Alert, Button, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { CartListItem } from '../../components/CartListItem';
+import { useProducts } from '../../contexts/ProductContext';
 
 const CartScreen = () => {
   const router = useRouter();
@@ -46,11 +12,11 @@ const CartScreen = () => {
 
   const handleFinalizeSale = () => {
     finalizeSale();
-    Alert.alert('Venda Finalizada', 'A venda foi finalizada com sucesso!')
-    router.push('/(tabs)')
+    Alert.alert('Venda Finalizada', 'O estoque foi atualizado com sucesso!');
+    router.push('/(tabs)');
+  };
 
-  }
- // Função para confirmar a remoção de um item
+  // Função para confirmar a remoção de um item
   const handleRemoveItem = (productId: string, productName: string) => {
     Alert.alert(
       "Remover Item",
@@ -77,8 +43,8 @@ const CartScreen = () => {
           <FlatList
             data={cart}
             renderItem={({ item }) => (
-              <CartListItem 
-                item={item} 
+              <CartListItem
+                item={item}
                 onUpdateQuantity={(amount) => updateCartQuantity(item.productId, amount)}
                 onRemove={() => handleRemoveItem(item.productId, item.name)}
               />
@@ -101,8 +67,9 @@ const CartScreen = () => {
   );
 }
 
-export default CartScreen;
+  export default CartScreen;
 
+// [AJUSTE] O objeto de estilos agora contém apenas o que é relevante para a TELA da sacola.
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -124,36 +91,6 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 10,
-  },
-  itemContainer: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    marginVertical: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  itemInfo: {
-    flex: 1,
-  },
-  itemName: {
-    fontSize: 18,
-    fontWeight: '500',
-  },
-  itemDetails: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 4,
-  },
-  itemActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  itemQuantity: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginHorizontal: 15,
   },
   summaryContainer: {
     padding: 20,
