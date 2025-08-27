@@ -1,7 +1,10 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { Alert, Button, FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Colors } from '../constants/Colors';
 import { CartItem, useProducts } from '../contexts/ProductContext';
 import { useSales } from '../contexts/SalesContext';
+
+const theme = Colors.dark;
 
 // Componente para renderizar cada produto vendido
 const SoldItem = ({ item }: { item: CartItem }) => (
@@ -11,7 +14,7 @@ const SoldItem = ({ item }: { item: CartItem }) => (
     </View>
 );
 
-export default function SaleDetailScreen() {
+const SaleDetailScreen = () => {
     const { saleId } = useLocalSearchParams();
     const router = useRouter();
     const {restoreStock} = useProducts();
@@ -57,53 +60,63 @@ export default function SaleDetailScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Stack.Screen options={{ title: 'Detalhes da Venda' }} />
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <Stack.Screen
+        options={{
+          title: 'Detalhes da Venda',
+          headerStyle: { backgroundColor: theme.card },
+          headerTintColor: theme.text,
+        }}
+      />
+      
+      <View style={styles.summaryContainer}>
+        <Text style={styles.dateText}>{formattedDate}</Text>
+        <Text style={styles.totalLabel}>VALOR TOTAL</Text>
+        <Text style={styles.totalValue}>R$ {sale.totalValue.toFixed(2).replace('.', ',')}</Text>
+      </View>
 
-            <View style={styles.summaryContainer}>
-                <Text style={styles.dateText}>{formattedDate}</Text>
-                <Text style={styles.totalLabel}>VALOR TOTAL</Text>
-                <Text style={styles.totalValue}>R$ {sale.totalValue.toFixed(2).replace('.', ',')}</Text>
-            </View>
+      <Text style={styles.itemsHeader}>Itens Vendidos</Text>
+      <FlatList
+        data={sale.items}
+        renderItem={({ item }) => <SoldItem item={item} />}
+        keyExtractor={(item) => item.productId}
+        contentContainerStyle={styles.list}
+      />
 
-            <Text style={styles.itemsHeader}>Itens Vendidos</Text>
-            <FlatList
-                data={sale.items}
-                renderItem={({ item }) => <SoldItem item={item} />}
-                keyExtractor={(item) => item.productId}
-                contentContainerStyle={styles.list}
-            />
-
-            <View style={styles.footer}>
-                <Button
-                    title="Reverter Venda"
-                    color="#c0392b"
-                    onPress={handleRevertSale}
-                />
-            </View>
-        </SafeAreaView>
-    );
+      <View style={styles.footer}>
+        <Button
+          title="Reverter Venda"
+          color={theme.danger} // Usando a cor de perigo do nosso tema
+          onPress={handleRevertSale}
+        />
+      </View>
+    </SafeAreaView>
+  );
 }
 
+export default SaleDetailScreen;
+
+// Estilos completamente atualizados para o tema escuro
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: theme.background,
     },
     summaryContainer: {
-        backgroundColor: 'white',
+        backgroundColor: theme.card,
         padding: 20,
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        borderBottomColor: theme.border,
     },
     dateText: {
         fontSize: 16,
-        color: '#666',
+        color: theme.tabIconDefault,
         textAlign: 'center',
     },
     totalLabel: {
         fontSize: 14,
-        color: '#666',
+        color: theme.tabIconDefault,
         textAlign: 'center',
         marginTop: 15,
         textTransform: 'uppercase',
@@ -112,12 +125,12 @@ const styles = StyleSheet.create({
         fontSize: 36,
         fontWeight: 'bold',
         textAlign: 'center',
-        color: '#333',
+        color: theme.tint, // Dourado para dar destaque
     },
     itemsHeader: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#333',
+        color: theme.text,
         padding: 20,
         paddingBottom: 10,
     },
@@ -127,26 +140,29 @@ const styles = StyleSheet.create({
     soldItemContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 10,
+        paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        borderBottomColor: theme.border,
     },
     soldItemName: {
         fontSize: 16,
+        color: theme.text,
     },
     soldItemPrice: {
         fontSize: 16,
         fontWeight: '500',
+        color: theme.text,
     },
     footer: {
         padding: 20,
         borderTopWidth: 1,
-        borderTopColor: '#eee',
-        backgroundColor: 'white',
+        borderTopColor: theme.border,
+        backgroundColor: theme.card,
     },
     errorText: {
         textAlign: 'center',
         marginTop: 50,
         fontSize: 18,
+        color: theme.tabIconDefault,
     },
 });
