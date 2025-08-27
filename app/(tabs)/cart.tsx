@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { Alert, Button, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { CartListItem } from '../../components/CartListItem';
+import CartListItem from '../../components/CartListItem';
 import { useProducts } from '../../contexts/ProductContext';
 
 const CartScreen = () => {
@@ -69,7 +69,6 @@ const CartScreen = () => {
 
   export default CartScreen;
 
-// [AJUSTE] O objeto de estilos agora contém apenas o que é relevante para a TELA da sacola.
 const styles = StyleSheet.create({
   container: {
     flex: 1,
