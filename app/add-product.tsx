@@ -1,15 +1,20 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   Alert,
   Button,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
-  TextInput
+  TextInput,
+  View
 } from 'react-native';
+import { Colors } from '../constants/Colors';
 import { useProducts } from '../contexts/ProductContext';
+
+const theme = Colors.dark;
 
 const AddOrEditProductScreen = () => {
   const router = useRouter(); 
@@ -71,17 +76,26 @@ const AddOrEditProductScreen = () => {
     router.back();
   };
 
-  return (
+   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <Stack.Screen
+        options={{
+          title: isEditMode ? 'Editar Produto' : 'Cadastrar Produto',
+          headerStyle: { backgroundColor: theme.card },
+          headerTintColor: theme.text, // Cor do texto e do botão de voltar
+          headerTitleStyle: { color: theme.text },
+        }}
+      />
+      
       <ScrollView contentContainerStyle={styles.form}>
-        <Text style={styles.title}>{isEditMode ? 'Editar Produto' : 'Cadastrar Novo Produto'}</Text>
-        
         <Text style={styles.label}>Nome do Produto</Text>
         <TextInput
           style={styles.input}
           placeholder="Ex: Camiseta Manga Longa"
           value={name}
           onChangeText={setName}
+          placeholderTextColor={theme.tabIconDefault}
         />
 
         <Text style={styles.label}>Preço (R$)</Text>
@@ -91,6 +105,7 @@ const AddOrEditProductScreen = () => {
           value={price}
           onChangeText={setPrice}
           keyboardType="numeric"
+          placeholderTextColor={theme.tabIconDefault}
         />
 
         <Text style={styles.label}>Cor</Text>
@@ -99,6 +114,7 @@ const AddOrEditProductScreen = () => {
           placeholder="Ex: Azul Marinho"
           value={color}
           onChangeText={setColor}
+          placeholderTextColor={theme.tabIconDefault}
         />
         
         <Text style={styles.label}>Gênero</Text>
@@ -107,6 +123,7 @@ const AddOrEditProductScreen = () => {
           placeholder="Masculino, Feminino ou Unissex"
           value={gender}
           onChangeText={(text) => setGender(text as any)}
+          placeholderTextColor={theme.tabIconDefault}
         />
 
         <Text style={styles.label}>Quantidade em Estoque</Text>
@@ -116,13 +133,16 @@ const AddOrEditProductScreen = () => {
           value={stock}
           onChangeText={setStock}
           keyboardType="numeric"
+          placeholderTextColor={theme.tabIconDefault}
         />
         
-        <Button 
-          title={isEditMode ? 'Salvar Alterações' : 'Salvar Produto'} 
-          onPress={handleSave} 
-          color="#0a7ea4"
-        />
+        <View style={styles.buttonContainer}>
+          <Button 
+            title={isEditMode ? 'Salvar Alterações' : 'Salvar Produto'} 
+            onPress={handleSave} 
+            color={theme.tint}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -130,34 +150,33 @@ const AddOrEditProductScreen = () => {
 
 export default AddOrEditProductScreen;
 
-// Estilos para o formulário
+// 2. ESTILOS ATUALIZADOS PARA O TEMA ESCURO
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.background,
   },
   form: {
     padding: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
   label: {
     fontSize: 16,
-    marginBottom: 5,
-    color: '#333',
+    marginBottom: 8,
+    color: theme.text,
+    fontWeight: '500',
   },
   input: {
-    backgroundColor: 'white',
+    backgroundColor: theme.card,
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderRadius: 8,
     fontSize: 16,
-    marginBottom: 15,
+    marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.border,
+    color: theme.text,
   },
+  buttonContainer: {
+    marginTop: 10,
+  }
 });
