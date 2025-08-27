@@ -3,7 +3,6 @@ import { Alert, Button, FlatList, SafeAreaView, StyleSheet, Text, View } from 'r
 import { CartItem, useProducts } from '../contexts/ProductContext';
 import { useSales } from '../contexts/SalesContext';
 
-
 // Componente para renderizar cada produto vendido
 const SoldItem = ({ item }: { item: CartItem }) => (
     <View style={styles.soldItemContainer}>
@@ -18,10 +17,9 @@ export default function SaleDetailScreen() {
     const {restoreStock} = useProducts();
     const { sales, deleteSale } = useSales();
 
-    // Encontramos a venda específica no nosso histórico usando o ID
     const sale = sales.find(s => s.id === saleId);
 
-    // Se, por algum motivo, a venda não for encontrada, mostramos uma mensagem
+    // Se, por algum motivo, a venda não for encontrada, mostra uma mensagem
     if (!sale) {
         return (
             <SafeAreaView style={styles.container}>
