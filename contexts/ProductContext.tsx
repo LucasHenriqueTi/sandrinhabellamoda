@@ -204,6 +204,7 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
     removeFromCart,
     updateCartQuantity,
     cartItemCount,
+    restoreStock
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;

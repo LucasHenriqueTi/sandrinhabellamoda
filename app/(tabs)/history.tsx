@@ -1,4 +1,5 @@
-import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Link } from 'expo-router';
+import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Sale, useSales } from '../../contexts/SalesContext';
 
 // Função para formatar a data para um formato mais legível
@@ -49,7 +50,13 @@ const HistoryScreen = () => {
       ) : (
         <FlatList
           data={sales}
-          renderItem={({ item }) => <SaleListItem sale={item} />}
+          renderItem={({ item }) => (
+            <Link href={{ pathname: '/sale-detail', params: { saleId: item.id } }} asChild>
+              <TouchableOpacity>
+                <SaleListItem sale={item} />
+              </TouchableOpacity>
+            </Link>
+          )}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
         />
