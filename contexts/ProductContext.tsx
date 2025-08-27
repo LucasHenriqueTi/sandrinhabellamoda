@@ -24,11 +24,14 @@ export type CartItem = {
 type ProductContextType = {
   products: Product[];
   cart: CartItem[];
+  cartItemCount: number;
   addProduct: (product: Omit<Product, 'id'>) => void;
   addToCart: (product: Product) => boolean;
   finalizeSale: () => void;
   deleteProduct: (productId: string) => void;
   editProduct: (updateProduct: Product) => void;
+  removeFromCart: (productId: string) => void;
+  updateCartQuantity: (productId: string, amount: number) => void;
 };
 
 // chave para o AsyncStorage
@@ -56,7 +59,7 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     }
-    
+
     LoadProductsFromStorage();
   }, []);
 
@@ -113,13 +116,48 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const editProduct = (updatedProduct: Product) => {
-    setProducts(prevProducts => 
-      prevProducts.map(product => 
+    setProducts(prevProducts =>
+      prevProducts.map(product =>
         product.id === updatedProduct.id ? updatedProduct : product
       )
     );
   };
 
+  // atualiza a quantidade de um item na sacola
+  const removeFromCart = (productId: string) => {
+    setCart(prevCart => prevCart.filter(item => item.productId !== productId));
+  };
+
+  // atualiza a quantidade de um item na sacola
+  const updateCartQuantity = (productId: string, amount: number) => {
+    const productInStock = products.find(p => p.id === productId);
+    const currentStock = productInStock ? productInStock.stock : 0;
+
+    setCart(prevCart => {
+      const itemInCart = prevCart.find(item => item.productId === productId);
+      const currentQuantity = itemInCart ? itemInCart.quantity : 0;
+
+      // Impede de adicionar mais do que o estoque
+      if (amount > 0 && currentQuantity + amount > currentStock) {
+        Alert.alert('Estoque Insuficiente', 'Não há mais unidades disponíveis para este item.');
+        return prevCart; // Retorna o carrinho sem alteração
+      }
+
+      const updatedCart = prevCart.map(item => {
+        if (item.productId === productId) {
+          const newQuantity = item.quantity + amount;
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      });
+
+      // Remove o item se a quantidade chegar a 0 ou menos
+      return updatedCart.filter(item => item.quantity > 0);
+    });
+  };
+
+  // calcula o total de itens na sacola
+  const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   // finaliza a venda e atualiza o estoque
   const finalizeSale = () => {
@@ -145,6 +183,9 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
     finalizeSale,
     deleteProduct,
     editProduct,
+    removeFromCart,
+    updateCartQuantity,
+    cartItemCount,
   };
 
   return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;

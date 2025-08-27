@@ -1,9 +1,11 @@
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
+import { useProducts } from '../../contexts/ProductContext';
 
 export default function TabLayout() {
   const colorScheme = 'light';
+  const { cartItemCount } = useProducts();
 
   return (
     <Tabs
@@ -23,12 +25,13 @@ export default function TabLayout() {
       />
       {/* Aba de Adicionar Produto (existente) */}
       <Tabs.Screen
-        name="cart" 
+        name="cart"
         options={{
           title: 'Sacola',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'cart' : 'cart-outline'} size={28} color={color} />
           ),
+          tabBarBadge: cartItemCount > 0 ? cartItemCount : undefined,
         }}
       />
     </Tabs>

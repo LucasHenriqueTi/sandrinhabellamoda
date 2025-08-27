@@ -1,27 +1,47 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Alert, Button, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CartItem, useProducts } from '../../contexts/ProductContext';
 
 // Componente para renderizar cada item na lista da sacola
-const CartListItem = ({ item }: { item: CartItem }) => (
+const CartListItem = ({ item, onUpdateQuantity, onRemove }: {
+  item: CartItem;
+  onUpdateQuantity: (amount: number) => void;
+  onRemove: () => void;
+}) => (
   <View style={styles.itemContainer}>
+    {/* Informações do item à esquerda */}
     <View style={styles.itemInfo}>
       <Text style={styles.itemName}>{item.name}</Text>
       <Text style={styles.itemDetails}>
-        Quantidade: {item.quantity} x R$ {item.price.toFixed(2).replace('.', ',')}
+        R$ {item.price.toFixed(2).replace('.', ',')} cada
       </Text>
     </View>
-    <Text style={styles.itemTotal}>
-      R$ {(item.quantity * item.price).toFixed(2).replace('.', ',')}
-    </Text>
+
+    {/* Ações do item à direita */}
+    <View style={styles.itemActions}>
+      <TouchableOpacity onPress={() => onUpdateQuantity(-1)}>
+        <Ionicons name="remove-circle-outline" size={28} color="#c0392b" />
+      </TouchableOpacity>
+
+      <Text style={styles.itemQuantity}>{item.quantity}</Text>
+
+      <TouchableOpacity onPress={() => onUpdateQuantity(1)}>
+        <Ionicons name="add-circle-outline" size={28} color="#27ae60" />
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={onRemove} style={{ marginLeft: 15 }}>
+        <Ionicons name="trash-outline" size={26} color="#333" />
+      </TouchableOpacity>
+    </View>
   </View>
 );
 
 const CartScreen = () => {
   const router = useRouter();
-  const { cart, finalizeSale } = useProducts();
+  const { cart, finalizeSale, updateCartQuantity, removeFromCart } = useProducts();
 
-  // Calculamos o preço total da compra
+  // Calculando o preço total da compra
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleFinalizeSale = () => {
@@ -30,6 +50,17 @@ const CartScreen = () => {
     router.push('/(tabs)')
 
   }
+ // Função para confirmar a remoção de um item
+  const handleRemoveItem = (productId: string, productName: string) => {
+    Alert.alert(
+      "Remover Item",
+      `Tem certeza de que deseja remover "${productName}" da sacola?`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Remover", onPress: () => removeFromCart(productId), style: "destructive" }
+      ]
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -45,7 +76,13 @@ const CartScreen = () => {
         <>
           <FlatList
             data={cart}
-            renderItem={({ item }) => <CartListItem item={item} />}
+            renderItem={({ item }) => (
+              <CartListItem 
+                item={item} 
+                onUpdateQuantity={(amount) => updateCartQuantity(item.productId, amount)}
+                onRemove={() => handleRemoveItem(item.productId, item.name)}
+              />
+            )}
             keyExtractor={(item) => item.productId}
             contentContainerStyle={styles.list}
           />
@@ -109,9 +146,14 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: 4,
   },
-  itemTotal: {
-    fontSize: 16,
+  itemActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  itemQuantity: {
+    fontSize: 18,
     fontWeight: 'bold',
+    marginHorizontal: 15,
   },
   summaryContainer: {
     padding: 20,
