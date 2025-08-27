@@ -13,9 +13,11 @@ const ProductItem = ({ product, onDelete }: { product: Product; onDelete: () => 
       <Text style={styles.stockText}>Estoque: {product.stock}</Text>
     </View>
     <View style={styles.itemActions}>
-      <TouchableOpacity onPress={() => {/* Lógica de Editar virá aqui */}}>
-        <Ionicons name="pencil" size={24} color="#0a7ea4" />
-      </TouchableOpacity>
+      <Link href={{ pathname: "/add-product", params: { productId: product.id } }} asChild>
+        <TouchableOpacity>
+          <Ionicons name="pencil" size={24} color="#0a7ea4" />
+        </TouchableOpacity>
+      </Link>
       <TouchableOpacity onPress={onDelete} style={{ marginLeft: 15 }}>
         <Ionicons name="trash-outline" size={24} color="#c0392b" />
       </TouchableOpacity>

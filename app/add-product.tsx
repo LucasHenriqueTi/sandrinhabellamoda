@@ -1,19 +1,23 @@
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
-    Alert,
-    Button,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput
+  Alert,
+  Button,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput
 } from 'react-native';
 import { useProducts } from '../contexts/ProductContext';
 
-const AddProductScreen = () => {
+const AddOrEditProductScreen = () => {
   const router = useRouter(); 
-  const { addProduct } = useProducts(); 
+  const params = useLocalSearchParams();
+  const { addProduct, editProduct, products } = useProducts(); 
+
+  const isEditMode = !!params.productId;
+  const productToEdit = isEditMode ? products.find(p => p.id === params.productId) : null;
 
   // 1. ESTADO PARA CADA CAMPO DO FORMULÁRIO
   const [name, setName] = useState('');
@@ -22,43 +26,56 @@ const AddProductScreen = () => {
   const [gender, setGender] = useState<'Masculino' | 'Feminino' | 'Unissex' | ''>('');
   const [stock, setStock] = useState('');
 
+  useEffect(() => {
+    if (productToEdit) {
+      setName(productToEdit.name);
+      setPrice(productToEdit.price.toString().replace('.', ','));
+      setColor(productToEdit.color);
+      setGender(productToEdit.gender);
+      setStock(productToEdit.stock.toString());
+    }
+  }, [productToEdit]);
+
   // 2. FUNÇÃO CHAMADA AO CLICAR EM "SALVAR"
-  const handleSave = () => {
+   const handleSave = () => {
     if (!name || !price || !stock) {
       Alert.alert('Erro', 'Por favor, preencha nome, preço e estoque.');
       return;
     }
-
-    // Converte os valores de string para número
     const priceValue = parseFloat(price.replace(',', '.'));
     const stockValue = parseInt(stock, 10);
-
-    // Validação numérica
     if (isNaN(priceValue) || isNaN(stockValue)) {
       Alert.alert('Erro', 'Preço e estoque devem ser números válidos.');
       return;
     }
 
-    // Cria o novo objeto de produto com os dados do formulário
-    const newProduct = {
-      name,
-      price: priceValue,
-      color,
-      gender: gender || 'Unissex',
-      stock: stockValue,
-    };
-
-    addProduct(newProduct);
-
-    Alert.alert('Sucesso!', 'Prooduto cadastrado.');
-
+    if (isEditMode) {
+      // Se estamos editando, chamamos 'editProduct'
+      const updatedProduct = {
+        id: productToEdit!.id, 
+        name,
+        price: priceValue,
+        color,
+        gender: gender || 'Unissex',
+        stock: stockValue,
+      };
+      editProduct(updatedProduct);
+      Alert.alert('Sucesso!', 'Produto atualizado.');
+    } else {
+      // Se não, chamamos 'addProduct' como antes
+      const newProduct = { name, price: priceValue, color, gender: gender || 'Unissex', stock: stockValue };
+      addProduct(newProduct);
+      Alert.alert('Sucesso!', 'Produto cadastrado.');
+    }
+    
     router.back();
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.form}>
-        <Text style={styles.title}>Cadastrar Novo Produto</Text>
+        {/* 5. TÍTULOS E BOTÕES DINÂMICOS */}
+        <Text style={styles.title}>{isEditMode ? 'Editar Produto' : 'Cadastrar Novo Produto'}</Text>
         
         <Text style={styles.label}>Nome do Produto</Text>
         <TextInput
@@ -102,13 +119,17 @@ const AddProductScreen = () => {
           keyboardType="numeric"
         />
         
-        <Button title="Salvar Produto" onPress={handleSave} color="#0a7ea4"/>
+        <Button 
+          title={isEditMode ? 'Salvar Alterações' : 'Salvar Produto'} 
+          onPress={handleSave} 
+          color="#0a7ea4"
+        />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-export default AddProductScreen;
+export default AddOrEditProductScreen;
 
 // Estilos para o formulário
 const styles = StyleSheet.create({
