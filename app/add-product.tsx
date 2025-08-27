@@ -74,7 +74,6 @@ const AddOrEditProductScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.form}>
-        {/* 5. TÍTULOS E BOTÕES DINÂMICOS */}
         <Text style={styles.title}>{isEditMode ? 'Editar Produto' : 'Cadastrar Novo Produto'}</Text>
         
         <Text style={styles.label}>Nome do Produto</Text>
