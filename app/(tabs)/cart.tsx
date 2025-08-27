@@ -1,8 +1,11 @@
 import { useRouter } from 'expo-router';
 import { Alert, Button, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
-import CartListItem from '../../components/CartListItem';
+import { CartListItem } from '../../components/CartListItem';
+import { Colors } from '../../constants/Colors';
 import { useProducts } from '../../contexts/ProductContext';
 import { useSales } from '../../contexts/SalesContext';
+
+const theme = Colors.dark;
 
 const CartScreen = () => {
   const router = useRouter();
@@ -33,6 +36,7 @@ const CartScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Sacola de Compras</Text>
       </View>
@@ -46,8 +50,8 @@ const CartScreen = () => {
           <FlatList
             data={cart}
             renderItem={({ item }) => (
-              <CartListItem
-                item={item}
+              <CartListItem 
+                item={item} 
                 onUpdateQuantity={(amount) => updateCartQuantity(item.productId, amount)}
                 onRemove={() => handleRemoveItem(item.productId, item.name)}
               />
@@ -61,7 +65,7 @@ const CartScreen = () => {
               title="Finalizar Venda"
               onPress={handleFinalizeSale}
               disabled={cart.length === 0}
-              color="#0a7ea4"
+              color={theme.tint} 
             />
           </View>
         </>
@@ -70,26 +74,25 @@ const CartScreen = () => {
   );
 }
 
-  export default CartScreen;
+export default CartScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    marginTop: StatusBar.currentHeight || 0,
+    backgroundColor: theme.background,
   },
   header: {
     paddingVertical: 16,
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    backgroundColor: theme.card,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: theme.border,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#333',
+    color: theme.text,
   },
   list: {
     paddingHorizontal: 10,
@@ -97,14 +100,15 @@ const styles = StyleSheet.create({
   summaryContainer: {
     padding: 20,
     borderTopWidth: 1,
-    borderTopColor: '#ddd',
-    backgroundColor: '#fff',
+    borderTopColor: theme.border,
+    backgroundColor: theme.card,
   },
   totalText: {
     fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'right',
     marginBottom: 15,
+    color: theme.text,
   },
   emptyContainer: {
     flex: 1,
@@ -113,6 +117,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    color: '#666',
+    color: theme.tabIconDefault,
   },
 });

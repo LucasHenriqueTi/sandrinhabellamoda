@@ -1,10 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Alert, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ProductItem from '../../components/ProductItem';
+import { ProductItem } from '../../components/ProductItem';
+import { Colors } from '../../constants/Colors'; // Importamos nossa paleta de cores
 import { Product, useProducts } from '../../contexts/ProductContext';
 
-const ProductScreen = () => {
+
+const theme = Colors.dark; // Definimos o tema escuro para a tela
+
+export default function ProductScreen() {
   const { products, addToCart, deleteProduct } = useProducts();
 
   const handleAddToCart = (product: Product) => {
@@ -27,6 +31,9 @@ const ProductScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Força a barra de status a usar texto claro no tema escuro */}
+      <StatusBar barStyle="light-content" /> 
+      
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Estoque</Text>
       </View>
@@ -47,33 +54,30 @@ const ProductScreen = () => {
 
       <Link href="/add-product" asChild>
         <TouchableOpacity style={styles.fab}>
-          <Ionicons name="add" size={32} color="white" />
+          <Ionicons name="add" size={32} color={theme.background} />
         </TouchableOpacity>
       </Link>
     </SafeAreaView>
   );
 }
 
-export default ProductScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    marginTop: StatusBar.currentHeight || 0,
+    backgroundColor: theme.background, // Fundo principal escuro
   },
   header: {
     paddingVertical: 16,
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
+    backgroundColor: theme.card, // Fundo do cabeçalho
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: theme.border, // Borda sutil
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#333',
+    color: theme.text, // Cor de texto clara
   },
   list: {
     paddingHorizontal: 10,
@@ -83,7 +87,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 20,
-    backgroundColor: '#0a7ea4',
+    backgroundColor: theme.tint, // Cor de destaque (dourado)
     width: 60,
     height: 60,
     borderRadius: 30,

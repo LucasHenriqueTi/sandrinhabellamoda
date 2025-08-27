@@ -11,6 +11,7 @@ export const Colors = {
     card: '#1E1E1E',
     border: '#2D2D2D',
     danger: '#e74c3c',
+    success: '#27ae60',
   },
   light: {
     text: '#11181C',

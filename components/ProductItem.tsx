@@ -1,9 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Colors } from '../constants/Colors';
 import { Product } from '../contexts/ProductContext';
 
-const ProductItem = ({ product, onDelete }: { 
+const theme = Colors.dark; 
+
+export const ProductItem = ({ product, onDelete }: { 
   product: Product; 
   onDelete: () => void;
 }) => (
@@ -16,33 +19,29 @@ const ProductItem = ({ product, onDelete }: {
     <View style={styles.itemActions}>
       <Link href={{ pathname: "/add-product", params: { productId: product.id } }} asChild>
         <TouchableOpacity>
-          <Ionicons name="pencil" size={24} color="#0a7ea4" />
+          {/* Ícone de editar agora usa a cor de destaque (dourado) */}
+          <Ionicons name="pencil" size={24} color={theme.tint} />
         </TouchableOpacity>
       </Link>
       <TouchableOpacity onPress={onDelete} style={{ marginLeft: 15 }}>
-        <Ionicons name="trash-outline" size={24} color="#c0392b" />
+        {/* Ícone de excluir agora usa a cor de perigo */}
+        <Ionicons name="trash-outline" size={24} color={theme.danger} />
       </TouchableOpacity>
     </View>
   </View>
 );
 
-export default ProductItem;
-
-// Note que aqui estão APENAS os estilos do item
 const styles = StyleSheet.create({
   itemContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.card, // Fundo de card escuro
     padding: 15,
     borderRadius: 8,
-    marginVertical: 8,
+    marginVertical: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
+    borderWidth: 1, // Usamos borda em vez de sombra para o tema escuro
+    borderColor: theme.border, // Borda sutil
   },
   itemInfo: {
     flex: 1,
@@ -50,15 +49,16 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 18,
     fontWeight: '500',
+    color: theme.text, // Cor de texto clara
   },
   itemPrice: {
     fontSize: 16,
-    color: '#666',
+    color: theme.tabIconDefault, // Cor de texto secundária
     marginTop: 4,
   },
   itemStock: {
     fontSize: 14,
-    color: '#666',
+    color: theme.tabIconDefault, // Cor de texto secundária
     marginTop: 4,
   },
   itemActions: {
