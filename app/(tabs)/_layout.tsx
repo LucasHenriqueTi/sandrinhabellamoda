@@ -10,13 +10,12 @@ const TabLayout = () => {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint, // Dourado para aba ativa
-        tabBarInactiveTintColor: Colors[colorScheme].tabIconDefault, // Cinza para inativas
+        tabBarActiveTintColor: Colors[colorScheme].tint, 
+        tabBarInactiveTintColor: Colors[colorScheme].tabIconDefault, 
         headerShown: false,
-        // Aplicando o estilo escuro à barra de abas
         tabBarStyle: {
-          backgroundColor: Colors[colorScheme].card, // Fundo dos cards
-          borderTopColor: Colors[colorScheme].border, // Cor da borda superior
+          backgroundColor: Colors[colorScheme].card, 
+          borderTopColor: Colors[colorScheme].border,
         },
       }}>
       

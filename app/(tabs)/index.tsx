@@ -2,11 +2,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Alert, FlatList, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ProductItem } from '../../components/ProductItem';
-import { Colors } from '../../constants/Colors'; // Importamos nossa paleta de cores
+import { Colors } from '../../constants/Colors';
 import { Product, useProducts } from '../../contexts/ProductContext';
 
 
-const theme = Colors.dark; // Definimos o tema escuro para a tela
+const theme = Colors.dark;
 
 export default function ProductScreen() {
   const { products, addToCart, deleteProduct } = useProducts();
@@ -64,20 +64,20 @@ export default function ProductScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.background, // Fundo principal escuro
+    backgroundColor: theme.background,
   },
   header: {
     paddingVertical: 16,
     paddingHorizontal: 20,
-    backgroundColor: theme.card, // Fundo do cabeçalho
+    backgroundColor: theme.card, 
     borderBottomWidth: 1,
-    borderBottomColor: theme.border, // Borda sutil
+    borderBottomColor: theme.border, 
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: theme.text, // Cor de texto clara
+    color: theme.text, 
   },
   list: {
     paddingHorizontal: 10,
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 20,
-    backgroundColor: theme.tint, // Cor de destaque (dourado)
+    backgroundColor: theme.tint,
     width: 60,
     height: 60,
     borderRadius: 30,
